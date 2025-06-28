@@ -32,7 +32,11 @@ const transports = {
 };
 
 app.use(
-  (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  (
+    req: express.Request,
+    _res: express.Response,
+    next: express.NextFunction,
+  ) => {
     logger.info(`Received request: ${req.method} ${req.url}`);
     logger.info(`Request body: ${JSON.stringify(req.body, null, 2)}`);
     next();
@@ -51,7 +55,7 @@ server.registerTool(
     description: "Echoes back the provided message",
     inputSchema: { message: z.string() },
   },
-  async ({ message }) => ({
+  ({ message }) => ({
     content: [{ type: "text", text: `Tool echo: ${message}` }],
   }),
 );
@@ -63,7 +67,7 @@ server.registerResource(
     title: "Echo Resource",
     description: "Echoes back messages as resources",
   },
-  async (uri: { href: any }, { message }: any) => ({
+  (uri: { href: any }, { message }: any) => ({
     contents: [{
       uri: uri.href,
       text: `Resource echo: ${message}`,
@@ -130,6 +134,8 @@ app.post("/mcp", async (req: express.Request, res: express.Response) => {
   } else if (isInitializeRequest(req.body)) {
     transport = await setupSession(sessionId);
   } else {
+    // if the client not support 404 status to create new session, we create a new one
+    logger.info(`Creating new session with sessionId ${sessionId}`);
     transport = await setupSession(sessionId);
 
     await transport.handleRequest(req, res, [{
@@ -153,29 +159,6 @@ app.post("/mcp", async (req: express.Request, res: express.Response) => {
       },
     }]);
   }
-
-  // if (!transports.streamable[sessionId ?? ""]) {
-  //   await transport.handleRequest(req, res, [{
-  //     "jsonrpc": "2.0",
-  //     "id": 1,
-  //     "method": "initialize",
-  //     "params": {
-  //       "protocolVersion": "2024-11-05",
-  //       "capabilities": {
-  //         "roots": {
-  //           "listChanged": true,
-  //         },
-  //         "sampling": {},
-  //         "elicitation": {},
-  //       },
-  //       "clientInfo": {
-  //         "name": "ExampleClient",
-  //         "title": "Example Client Display Name",
-  //         "version": "1.0.0",
-  //       },
-  //     },
-  //   }]);
-  // }
 
   // Handle the request
   await transport.handleRequest(req, res, req.body);
