@@ -1,0 +1,9 @@
+{
+  "imports": {
+    "@logtape/logtape": "jsr:@logtape/logtape@^1.0.0",
+    "@modelcontextprotocol/sdk": "npm:@modelcontextprotocol/sdk@^1.13.2",
+    "@types/express": "npm:@types/express@^5.0.3",
+    "express": "npm:express@^5.1.0",
+    "zod": "npm:zod@^3.25.67"
+  }
+}

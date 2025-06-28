@@ -1,0 +1,14 @@
+// Devcontainer configuration for Deno + TypeScript + MCP SDK
+{
+  "name": "Deno + TypeScript + MCP SDK",
+  "image": "denoland/deno:alpine",
+  "features": {},
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "denoland.vscode-deno"
+      ]
+    }
+  },
+  "postCreateCommand": "deno --version"
+}
